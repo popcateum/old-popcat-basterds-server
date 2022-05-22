@@ -41,6 +41,7 @@ class Wallet {
     //화이트리스트 정보 업데이트
     update (first_tx_hash, first_tx_time, first_tx_block){
         this.whitelisted = true;
+        this.year = new Date(first_tx_time).getFullYear();
         this.first_tx_hash = first_tx_hash;
         this.first_tx_time = first_tx_time;
         this.first_tx_block = first_tx_block;
@@ -48,9 +49,8 @@ class Wallet {
 
     toJSON (){
         return{
-            whitelisted: this.whitelisted,
-            valid: this.valid,
             address : this.address,
+            year : this.year,
             first_tx_hash : this.first_tx_hash,
             first_tx_time : this.first_tx_time,
             first_tx_block : this.first_tx_block
@@ -68,23 +68,26 @@ async function updateAddressInfo(wallet, res){
         if(result.length == 0){
             //화이트리스트 db에 없는 경우
             console.log("not whitelisted wallet : " + wallet.address);
+            res.status(418).json({ message : "I'm a teapot"});
+            return false;
         }
         else
         {
             //화이트리스트 DB에 있다면 정보 업데이트
             wallet.update(result[0].hash, result[0].block_timestamp, result[0].block_number);
             console.log("whitelisted wallet : " + wallet.address);
+            return true;
         }
-
     }catch(error){
         let now = new Date();
         console.log(now);
         console.log(error);
-        res.status(400).json(
+        res.status(404).json(
             {
                 message : "DB Error",
                 date : now
             });
+        return false;
     }finally {
         if(connection != null){
             connection.release();
@@ -97,11 +100,14 @@ async function updateAddressInfo(wallet, res){
 router.get("/info", async (req, res) => {
     let wallet = new Wallet(req.query.address);
     if(!wallet.valid){
-        //유효하지 않은 주소는 DB를 조회하지 않고 whitelist false return
+        //유효하지 않은 주소는 DB를 조회하지 않는다
         res.status(418).json({ message : "I'm a teapot"});
         return;
     }
-    await updateAddressInfo(wallet, res);
+
+    //이미 4xx 응답된 경우
+    if(!await updateAddressInfo(wallet, res)) return;
+
     res.json(wallet.toJSON());
 });
 
@@ -109,15 +115,16 @@ router.get("/info", async (req, res) => {
 router.get("/ticket", async (req, res) => {
     let wallet = new Wallet(req.query.address);
     if(!wallet.valid){
-        //유효하지 않은 주소는 DB를 조회하지 않고 whitelist false return
-        res.json(wallet.toJSON());
+        //유효하지 않은 주소는 DB를 조회하지 않는다
+        res.status(418).json({ message : "I'm a teapot"});
         return;
     }
-    await updateAddressInfo(wallet, res);
+
+    //이미 4xx 응답된 경우
+    if(!await updateAddressInfo(wallet, res)) return;
+
     try {
         if (wallet.whitelisted) {
-            res.json(wallet.toJSON());
-
             let signer = new ethers.Wallet(process.env.WL_SIGNER_PK);
             //서명 메시지 생성 [민터주소, 발행년도, opb sale 컨트렉 주소]
             let messageHash = ethers.utils.solidityKeccak256(
@@ -142,15 +149,14 @@ router.get("/ticket", async (req, res) => {
             console.log("signature:" + signature)
 
             res.json({
-                whitelisted: true,
                 year: new Date(wallet.first_tx_time).getFullYear(),
-                ticket_hash: messageHashBinary,
+                ticket_hash: messageHash,
                 ticket_signature: signature
             })
 
         } else {
             //유효하지 않은 경우
-            res.json(wallet.toJSON());
+            res.status(418).json({ message : "I'm a teapot"});
         }
     }catch (error){
         let now = new Date();

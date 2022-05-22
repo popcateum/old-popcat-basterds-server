@@ -17,37 +17,26 @@ OPB Gasless WL server
 ![418](https://http.cat/418)
   
 
-- `400` 서버 오류입니다
+- `400` 서버에서 정의되지 않은 예외 발생
 ![400](https://http.cat/400)
 
-### 서명 구조
+### 서명 객체
 ```
-//지갑주소, 발행연도, 세일 컨트렉트 주소로 서명 메시지 생성
-let messageHash = ethers.utils.solidityKeccak256(
-            [
-                'address',
-                'uint256',
-                'address'
-            ],
-            [
-                wallet.address,
-                new Date(wallet.first_tx_time).getFullYear(),
-                process.env.SALE_CONTRACT_ADDRESS,
-            ]
-        );
+[
+    'address',
+    'uint256',
+    'address'
+],
+[
+    wallet.address,
+    new Date(wallet.first_tx_time).getFullYear(),
+    process.env.SALE_CONTRACT_ADDRESS,
+]
+```
+서명은 WL_MANAGER Key로 Sign되었으며, 서버에서 전달받은 `ticket_hash` 를 컨트렉트에 전달 시 아래와 같이 uint8array로 형변환이 필요함
 
-//32 bytes array 를 Uint8 array로 형변환
-let messageHashBinary = await ethers.utils.arrayify(messageHash);
 
-//SIGNER PK로 서명
-let signature = await signer.signMessage(messageHashBinary);
 
-//클라이언트 응답
-res.json({
-    whitelisted: true,
-    year: new Date(wallet.first_tx_time).getFullYear(),
-    ticket_hash: messageHashBinary,
-    ticket_signature: signature
-})
-
+```
+let ticket_hash_binary = await ethers.utils.arrayify(ticket_hash);
 ```
