@@ -98,7 +98,7 @@ router.get("/info", async (req, res) => {
     let wallet = new Wallet(req.query.address);
     if(!wallet.valid){
         //유효하지 않은 주소는 DB를 조회하지 않고 whitelist false return
-        res.json(wallet.toJSON());
+        res.status(418).json({ message : "I'm a teapot"});
         return;
     }
     await updateAddressInfo(wallet, res);
@@ -150,9 +150,7 @@ router.get("/ticket", async (req, res) => {
 
         } else {
             //유효하지 않은 경우
-            res.json({
-                whitelisted: false
-            })
+            res.json(wallet.toJSON());
         }
     }catch (error){
         let now = new Date();
