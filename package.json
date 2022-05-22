@@ -3,11 +3,16 @@
   "version": "1.0.0",
   "dependencies": {
     "dotenv": "^16.0.1",
+    "env-cmd": "^10.1.0",
     "express": "^4.18.1",
     "http-errors": "^2.0.0",
     "mysql": "^2.18.1"
   },
   "devDependencies": {
     "ethers": "^5.6.6"
+  },
+  "scripts": {
+    "start": "env-cmd -f .env node app.js",
+    "test": "env-cmd -f .env.test node app.js"
   }
 }

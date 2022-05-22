@@ -1,9 +1,10 @@
+require('dotenv').config()
 const createError = require('http-errors')
 let express = require('express');
 let router = express.Router();
 
 const { ethers } = require("ethers");
-require('dotenv').config()
+
 
 /*
 200 object sample
@@ -44,7 +45,7 @@ router.get("/ticket", (req, res) => {
     let address  = req.query.address;
     let info = addressInfo(address, res)
     console.log("sign whitelist address : " + address);
-    
+
     //TODO info 데이터로 서명해서 돌려주기
     res.status(200).send("Hello Check!");
 });
