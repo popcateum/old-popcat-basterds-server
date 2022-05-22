@@ -67,15 +67,14 @@ async function updateAddressInfo(wallet, res){
         console.log(result);
         if(result.length == 0){
             //화이트리스트 db에 없는 경우
-            res.json(wallet.toJSON());
             console.log("not whitelisted wallet : " + wallet.address);
         }
         else
         {
+            //화이트리스트 DB에 있다면 정보 업데이트
             wallet.update(result[0].hash, result[0].block_timestamp, result[0].block_number);
             console.log("whitelisted wallet : " + wallet.address);
         }
-        //return wallet;
 
     }catch(error){
         let now = new Date();
@@ -103,9 +102,7 @@ router.get("/info", async (req, res) => {
         return;
     }
     await updateAddressInfo(wallet, res);
-    if(wallet.whitelisted){
-        res.json(wallet.toJSON());
-    }
+    res.json(wallet.toJSON());
 });
 
 // 서명된 화이트리스트 티켓 받기
@@ -117,48 +114,57 @@ router.get("/ticket", async (req, res) => {
         return;
     }
     await updateAddressInfo(wallet, res);
-    if(wallet.whitelisted){
-        res.json(wallet.toJSON());
+    try {
+        if (wallet.whitelisted) {
+            res.json(wallet.toJSON());
 
-        let signer = new ethers.Wallet(process.env.WL_SIGNER_PK);
-        //서명 메시지 생성 [민터, 팝캣타입, opb 컨트렉 주소]
-        let messageHash = ethers.utils.solidityKeccak256(
-            [
-                'address',
-                'uint256',
-                'address'
-            ],
-            [
-                wallet.address,
-                new Date(wallet.first_tx_time).getFullYear(),
-                process.env.SALE_CONTRACT_ADDRESS,
-            ]
-        );
+            let signer = new ethers.Wallet(process.env.WL_SIGNER_PK);
+            //서명 메시지 생성 [민터주소, 발행년도, opb sale 컨트렉 주소]
+            let messageHash = ethers.utils.solidityKeccak256(
+                [
+                    'address',
+                    'uint256',
+                    'address'
+                ],
+                [
+                    wallet.address,
+                    new Date(wallet.first_tx_time).getFullYear(),
+                    process.env.SALE_CONTRACT_ADDRESS,
+                ]
+            );
 
+            //32 bytes array 를 Uint8 array로 형변환
+            let messageHashBinary = await ethers.utils.arrayify(messageHash);
+            console.log("hash:" + messageHashBinary);
+
+            //SIGNER PK로 서명
+            let signature = await signer.signMessage(messageHashBinary);
+            console.log("signature:" + signature)
+
+            res.json({
+                whitelisted: true,
+                year: new Date(wallet.first_tx_time).getFullYear(),
+                ticket_hash: messageHashBinary,
+                ticket_signature: signature
+            })
+
+        } else {
+            //유효하지 않은 경우
+            res.json({
+                whitelisted: false
+            })
+        }
+    }catch (error){
+        let now = new Date();
+        console.log(now);
+        console.log(error);
+        res.status(400).json(
+            {
+                message : "SIGN Error",
+                date : now
+            });
     }
 
-    //서명 메시지 생성 [민터, 팝캣타입, opb 컨트렉 주소]
-    let messageHash = ethers.utils.solidityKeccak256(
-        ['address', 'uint256', 'address'],
-        [validUser.address, '1', opb.address]
-    );
-
-    //32 bytes array 를 Uint8 array로 형변환
-    let messageHashBinary = await ethers.utils.arrayify(messageHash);
-
-    //정상서명
-    let validSignature = await signer.signMessage(messageHashBinary);
-
-    //잘못된서명자
-    let invalidSignature = await validUser.signMessage(messageHashBinary);
-
-
-    let address  = req.query.address;
-    let info = addressInfo(address, res)
-    console.log("sign whitelist address : " + address);
-
-    //TODO info 데이터로 서명해서 돌려주기
-    res.status(200).send("Hello Check!");
 });
 
 module.exports = router;

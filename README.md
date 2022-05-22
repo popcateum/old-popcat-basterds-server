@@ -5,6 +5,7 @@ OPB Gasless WL server
 
 ### 서명 구조
 ```
+//지갑주소, 발행연도, 세일 컨트렉트 주소로 서명 메시지 생성
 let messageHash = ethers.utils.solidityKeccak256(
             [
                 'address',
@@ -17,10 +18,36 @@ let messageHash = ethers.utils.solidityKeccak256(
                 process.env.SALE_CONTRACT_ADDRESS,
             ]
         );
+
+//32 bytes array 를 Uint8 array로 형변환
+let messageHashBinary = await ethers.utils.arrayify(messageHash);
+
+//SIGNER PK로 서명
+let signature = await signer.signMessage(messageHashBinary);
+
+//클라이언트 응답
+res.json({
+    whitelisted: true,
+    year: new Date(wallet.first_tx_time).getFullYear(),
+    ticket_hash: messageHashBinary,
+    ticket_signature: signature
+})
+
 ```
 
 ### API DOCS
- [soon]
+- API DOCS 링크는 요청시 개별 전달
+
+#### PRO TIP
+- 사전 정의된 모든 경우의 수에는 2xx 응답
+  - 모든 2xx 응답엔 `whitelist` 라는 key가 존재
+    - `ture` 정상 참여자
+    - `false` api docs 참고하여 front-end 예외처리
+- 사전 정의되지 않은 모든 경우의 수에는 `4xx` 응답
+  - 응답값 전달 시 로그 확인 가능
+
+
+
    
 ### 요구사항 아카이브
 과거버전, 메모용
