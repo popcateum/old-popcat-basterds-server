@@ -1,48 +1,29 @@
 # old-popcat-bastards-server
 OPB Gasless WL server
 
-### [GET] 참여자격 조회  
-- /whitelist/check?address=`EOA 지갑주소`
+![opb-flow](./image/opb-flow.png)
+
+### 서명 구조
 ```
-[200]
-{
-    address:EOA지갑주소,
-    first_tx_hash : 0xaa..,
-    first_tx_time : 2017-05-20 19:13:49,
-    first_tx_block : 12345
-}
+let messageHash = ethers.utils.solidityKeccak256(
+            [
+                'address',
+                'uint256',
+                'address'
+            ],
+            [
+                wallet.address,
+                new Date(wallet.first_tx_time).getFullYear(),
+                process.env.SALE_CONTRACT_ADDRESS,
+            ]
+        );
+```
+
+### API DOCS
+ [soon]
    
-```
-
-### [GET] 화이트리스트 참여 티켓 획득
-- /whitelist/ticket?address=`EOA 지갑주소`
-- 서명구조 : [address, year, contract_address]
-```
-[200]
-{
-    address : EOA지갑주소,
-    year : 2017,
-    contract_address : 세일계약주소
-    ticket_hash : 서명된해시값,
-    ticket_signature : 서명
-}
-```
-### 공통에러
-```
-[400]
-{   
-    message:"Invalid address."
-}
-
-[401]
-{   
-    message:"Not whitelisted"
-}
-   
-```
-
-   
-
+### 요구사항 아카이브
+과거버전, 메모용
 
 
 1. 단순 참여조회 flow
@@ -74,11 +55,11 @@ OPB Gasless WL server
    isValidSignatureNow(address(WL_MANAGER), _hash, _signature)
 
 
-    민트-3. 앞 두 절차를 통과했다면 몇가지 더 체크한다
-    msg.sender == _address //서명을 들고온 사람이 tx 가져온 사람인가?
-    this.address = _saleContractAddress //서명 리플레이 어택 방지
-    msg.sender의 잔여구매가능수량
-    signature.popcatType 의 판매 가능 수량이 남았는지
-    
-   
-    검증 완료 시 signature.popcatType민트 (수수료 차감.)
+ 민트-3. 앞 두 절차를 통과했다면 몇가지 더 체크한다
+ msg.sender == _address //서명을 들고온 사람이 tx 가져온 사람인가?
+ this.address = _saleContractAddress //서명 리플레이 어택 방지
+ msg.sender의 잔여구매가능수량
+ signature.popcatType 의 판매 가능 수량이 남았는지
+ 
+
+ 검증 완료 시 signature.popcatType민트 (수수료 차감.)
