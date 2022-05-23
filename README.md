@@ -1,4 +1,4 @@
-# old-popcat-bastards-server
+# old-popcat-basterds-server
 OPB Gasless WL server
 
 ![opb-flow](./image/opb-flow.png)
