@@ -2,6 +2,7 @@
   "name": "old-popcat-bastards-server",
   "version": "1.0.0",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "env-cmd": "^10.1.0",
     "express": "^4.18.1",

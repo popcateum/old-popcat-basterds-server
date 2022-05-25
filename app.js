@@ -1,9 +1,11 @@
 require('dotenv').config()
 const express = require("express");
+const cors = require("cors");
 const indexRouter = require('./routes/index')
 const whitelistRouter = require('./routes/whitelist')
 
 const app = express();
+app.use(cors());
 app.use('/', indexRouter);
 app.use('/whitelist', whitelistRouter);
 
