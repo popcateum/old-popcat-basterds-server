@@ -7,7 +7,7 @@ const whitelistRouter = require
 let corsOptions = {
     origin: 'https://*.oldpopcatbasterds.com',
     credentials: true
-}('./routes/whitelist')
+}
 
 const app = express();
 app.use(cors(corsOptions));
