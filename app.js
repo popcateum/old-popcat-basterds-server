@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require("express");
 const cors = require("cors");
 const indexRouter = require('./routes/index')
-const whitelistRouter = require
+const whitelistRouter = require('./routes/whitelist')
 
 let corsOptions = {
     origin: 'https://*.oldpopcatbasterds.com',
