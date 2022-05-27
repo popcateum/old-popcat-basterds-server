@@ -1,5 +1,6 @@
 require('dotenv').config()
 
+const moment = require("moment");
 const { ethers } = require("ethers");
 const createError = require('http-errors')
 const db = require('../db')
@@ -20,6 +21,7 @@ class Wallet {
     first_tx_hash = null;
     first_tx_time = null;
     first_tx_block = null;
+    date_info = null;
 
     constructor(address){
 
@@ -39,12 +41,13 @@ class Wallet {
     }
 
     //화이트리스트 정보 업데이트
-    update (first_tx_hash, first_tx_time, first_tx_block){
+    async update (first_tx_hash, first_tx_time, first_tx_block, res){
         this.whitelisted = true;
         this.year = new Date(first_tx_time).getFullYear();
         this.first_tx_hash = first_tx_hash;
         this.first_tx_time = first_tx_time;
-        this.first_tx_block = first_tx_block;
+        this.first_tx_block = first_tx_block.toLocaleString('en-US');
+        this.date_info = await getDateInfo(first_tx_time, res);
     }
 
     toJSON (){
@@ -53,7 +56,43 @@ class Wallet {
             year : this.year,
             first_tx_hash : this.first_tx_hash,
             first_tx_time : this.first_tx_time,
-            first_tx_block : this.first_tx_block
+            first_tx_block : this.first_tx_block,
+            date_info : this.date_info
+        }
+    }
+}
+
+async function getDateInfo(date, res){
+    let dateString = moment(date).format('YYYY-MM-DD').toString();
+    console.log("dateString : " + dateString);
+
+    let connection = null;
+    try{
+        connection = await db.getConnection();
+        // where `date` =" + dateString;
+        const sql = "SELECT * FROM dateinfo WHERE date_string=\'" + dateString + "\'";
+        console.log(sql);
+        const [ result ] = await connection.query(sql);
+        let info = result[0];
+        info.created_per_day = info.created_per_day.toLocaleString('en-US');
+        info.created_acc = info.created_acc.toLocaleString('en-US');
+        info.total_wallet_count = info.total_wallet_count.toLocaleString('en-US');
+        info.top_percent = (info.top_percent * 100).toFixed(4) + "%";
+        return info;
+
+    }catch(error){
+        let now = new Date();
+        console.log(now);
+        console.log(error);
+        res.status(404).json(
+            {
+                message : "DB Error 2",
+                date : now
+            });
+        return false;
+    }finally {
+        if(connection != null){
+            connection.release();
         }
     }
 }
@@ -74,7 +113,7 @@ async function updateAddressInfo(wallet, res){
         else
         {
             //화이트리스트 DB에 있다면 정보 업데이트
-            wallet.update(result[0].hash, result[0].block_timestamp, result[0].block_number);
+            await wallet.update(result[0].hash, result[0].block_timestamp, result[0].block_number, res);
             console.log("whitelisted wallet : " + wallet.address);
             return true;
         }
@@ -93,8 +132,6 @@ async function updateAddressInfo(wallet, res){
             connection.release();
         }
     }
-
-
 }
 //지갑 정보
 router.get("/info", async (req, res) => {
@@ -107,7 +144,6 @@ router.get("/info", async (req, res) => {
 
     //이미 4xx 응답된 경우
     if(!await updateAddressInfo(wallet, res)) return;
-
     res.json(wallet.toJSON());
 });
 
