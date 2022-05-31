@@ -5,7 +5,7 @@ const indexRouter = require('./routes/index');
 const whitelistRouter = require('./routes/whitelist');
 
 let corsOptions = {
-    origin: '*.oldpopcatbasterds.com',
+    origin: 'https://*.oldpopcatbasterds.com',
     credentials: true
 }
 
