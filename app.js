@@ -10,7 +10,7 @@ let corsOptions = {
 }
 
 const app = express();
-app.use(cors(corsOptions));
+app.use(cors());
 app.use('/', indexRouter);
 app.use('/whitelist', whitelistRouter);
 
