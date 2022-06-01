@@ -51,6 +51,7 @@ class Wallet {
     }
 
     toJSON (){
+        console.log("debug:first_tx_time:" + this.first_tx_time);
         return{
             address : this.address,
             year : this.year,
@@ -64,7 +65,8 @@ class Wallet {
 
 async function getDateInfo(date, res){
     let dateString = moment(date).format('YYYY-MM-DD').toString();
-    console.log("dateString : " + dateString);
+    console.log("debug:date : " + date);
+    console.log("debug:dateString : " + dateString);
 
     let connection = null;
     try{
