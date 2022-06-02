@@ -111,7 +111,6 @@ class Metadata{
 }
 
 router.get("/:token_id", (req, res) => {
-
     let token_id = req.params.token_id;
     
     if(token_id < 1 || token_id > 10000){
@@ -120,8 +119,7 @@ router.get("/:token_id", (req, res) => {
     }
 
     let metadata = new Metadata(token_id).toJSON();
-    console.log("Get Metadata");
-    console.log(metadata);
+    console.log("Get Metadata:" + token_id + "\n" + metadata);
     res.json(metadata);
 });
 
