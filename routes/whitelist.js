@@ -51,7 +51,7 @@ class Wallet {
     }
 
     toJSON (){
-        console.log("debug:first_tx_time:" + this.first_tx_time);
+        //console.log("debug:first_tx_time:" + this.first_tx_time);
         return{
             address : this.address,
             year : this.year,
@@ -65,15 +65,15 @@ class Wallet {
 
 async function getDateInfo(date, res){
     let dateString = moment(date).format('YYYY-MM-DD').toString();
-    console.log("debug:date : " + date);
-    console.log("debug:dateString : " + dateString);
+    //console.log("debug:date : " + date);
+    //console.log("debug:dateString : " + dateString);
 
     let connection = null;
     try{
         connection = await db.getConnection();
         // where `date` =" + dateString;
         const sql = "SELECT * FROM dateinfo WHERE date_string=\'" + dateString + "\'";
-        console.log(sql);
+        //console.log(sql);
         const [ result ] = await connection.query(sql);
         let info = result[0];
         info.created_per_day = info.created_per_day.toLocaleString('en-US');
