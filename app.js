@@ -6,7 +6,7 @@ const whitelistRouter = require('./routes/whitelist');
 const metadataRouter = require('./routes/metadata');
 
 let corsOptions = {
-    origin: 'https://oldpopcatbasterds.com',
+    origin: 'https://oldpopcatbasterds.wtf',
     credentials: true
 }
 

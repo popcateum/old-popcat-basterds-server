@@ -113,7 +113,7 @@ class Metadata{
 router.get("/:token_id", (req, res) => {
 
     let token_id = req.params.token_id;
-    console.log(token_id)
+    //console.log(token_id)
 
     if(token_id < 1 || token_id > 10000){
         res.status(418).json({ message : "I'm a teapot"});
