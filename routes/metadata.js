@@ -119,7 +119,7 @@ router.get("/:token_id", (req, res) => {
     }
 
     let metadata = new Metadata(token_id).toJSON();
-    console.log("Get Metadata:" + token_id + "\n" + metadata);
+    console.log("Get Metadata:" + token_id + "\n" + JSON.parse(metadata));
     res.json(metadata);
 });
 
