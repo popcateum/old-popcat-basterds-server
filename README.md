@@ -40,3 +40,13 @@ OPB Gasless WL server
 ```
 let ticket_hash_binary = await ethers.utils.arrayify(ticket_hash);
 ```
+
+
+/*
+ * ----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <freerhein@gmail.com> wrote this file. As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return freerhein.
+ * ----------------------------------------------------------------------------
+ */
