@@ -12,7 +12,8 @@ app.use(function (req, res, next) {
     console.log(req.headers)
     console.log(req.headers.origin)
     if(req.headers.origin == undefined){
-        console.log("holy moly")
+        console.log("holy molym, referer is:")
+        console.log(req.headers.referer)
     }
     if(allowedOrigins.indexOf(req.headers.origin) > -1){
         console.log("hell world")
