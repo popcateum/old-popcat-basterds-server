@@ -9,6 +9,7 @@ const allowedOrigins = ['https://oldpopcatbasterds.wtf', 'https://v2.dogesound.c
 const app = express();
 
 app.use(function (req, res, next) {
+    console.log(req.headers.origin)
     if(allowedOrigins.indexOf(req.headers.origin) > -1){
         res.setHeader('Access-Control-Allow-Origin', origin);
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
