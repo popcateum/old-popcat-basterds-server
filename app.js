@@ -17,7 +17,7 @@ const corsOptionsDelegate = (req, callback) => {
     let corsOptions;
 
     console.log(req.header('Origin'))
-    let isDomainAllowed = allowlist.indexOf(req.header('Origin')) !== -1;
+    let isDomainAllowed = allowlist.indexOf(req.header('Origin'))
     console.log(isDomainAllowed)
     if (isDomainAllowed) {
         corsOptions = { 
