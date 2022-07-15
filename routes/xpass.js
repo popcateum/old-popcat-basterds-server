@@ -2,7 +2,7 @@ let express = require('express');
 let router = express.Router();
 
 
-router.get("/:token_id", (req, res) => {
+router.get("/metadata/:token_id", (req, res) => {
     console.log(res)
     let token_id = req.params.token_id;
     
