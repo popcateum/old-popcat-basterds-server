@@ -11,6 +11,9 @@ const app = express();
 app.use(function (req, res, next) {
     console.log(req.headers)
     console.log(req.headers.origin)
+    if(req.headers.origin == undefined){
+        console.log("holy moly")
+    }
     if(allowedOrigins.indexOf(req.headers.origin) > -1){
         console.log("hell world")
         res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
