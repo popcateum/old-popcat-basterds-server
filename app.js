@@ -16,8 +16,9 @@ const allowlist = ['https://oldpopcatbasterds.wtf', 'https://v2.dogesound.club',
 const corsOptionsDelegate = (req, callback) => {
     let corsOptions;
 
+    console.log(req.header)
     let isDomainAllowed = allowlist.indexOf(req.header('Origin')) !== -1;
-
+    console.log(isDomainAllowed)
     if (isDomainAllowed) {
         corsOptions = { 
             origin: true ,
