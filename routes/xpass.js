@@ -3,6 +3,7 @@ let router = express.Router();
 
 
 router.get("/:token_id", (req, res) => {
+    console.log(res)
     let token_id = req.params.token_id;
     
     if(token_id < 1 || token_id > 30000){
