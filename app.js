@@ -11,16 +11,27 @@ const app = express();
 app.use(function (req, res, next) {
     console.log(req.headers)
     console.log(req.headers.origin)
-    if(req.headers.origin == undefined){
-        console.log("holy molym, referer is:")
-        console.log(req.headers.referer)
-    }
-    if(allowedOrigins.indexOf(req.headers.origin) > -1){
+
+    if(allowedOrigins.indexOf(req.headers.origin) > -1)
+    {
         console.log("hell world")
         res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
         res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Accept');
         res.setHeader('Access-Control-Allow-Credentials', true);
+    }
+    else if(req.headers.origin == undefined && req.headers.referer != undefined)
+    {
+        //origin이 헤더에 없는 경우(..) 굳이 referer를 찾아서 origin으로 동적 cors 를 적용한다...
+        not_origin = req.headers.referer.replace(/\/$/, ""); //without trailing slash
+
+        if(allowedOrigins.indexOf(not_origin) > -1){
+            console.log("more hell world")
+            res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+            res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Accept');
+            res.setHeader('Access-Control-Allow-Credentials', true);
+        }
     }
     next();
 })
