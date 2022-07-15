@@ -5,13 +5,14 @@ const whitelistRouter = require('./routes/whitelist');
 const metadataRouter = require('./routes/metadata');
 const xpassRouter = require('./routes/xpass');
 
-const allowedOrigins = ['https://oldpopcatbasterds.wtf', 'https://v2.dogesound.club', 'https://egsa.io/'];
+const allowedOrigins = ['https://oldpopcatbasterds.wtf', 'https://v2.dogesound.club', 'https://egsa.io'];
 const app = express();
 
 app.use(function (req, res, next) {
     console.log(req.headers.origin)
     if(allowedOrigins.indexOf(req.headers.origin) > -1){
-        res.setHeader('Access-Control-Allow-Origin', origin);
+        console.log("hell world")
+        res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
         res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Accept');
         res.setHeader('Access-Control-Allow-Credentials', true);
