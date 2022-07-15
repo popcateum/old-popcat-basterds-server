@@ -1,4 +1,5 @@
 let express = require('express');
+var path = require('path');
 let router = express.Router();
 
 
@@ -17,7 +18,7 @@ router.get("/metadata/:token_id", (req, res) => {
 });
 
 router.get("/image", (req, res) => {
-    res.sendFile('../image/xpass.png', { root: __dirname })
+    res.sendFile(path.join(__dirname, '../image', 'xpass.png'));
 });
 
 module.exports = router;
