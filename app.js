@@ -11,14 +11,14 @@ const xpassRouter = require('./routes/xpass');
 //     credentials: true
 // }
 
-const allowlist = ['https://oldpopcatbasterds.wtf', 'https://v2.dogesound.club', 'https://egsa.io'];
+const allowlist = ['https://oldpopcatbasterds.wtf', 'https://v2.dogesound.club', 'https://egsa.io/'];
 
 const corsOptionsDelegate = (req, callback) => {
     let corsOptions;
 
-    console.log(req.header('Origin'))
-    let isDomainAllowed = allowlist.indexOf(req.header('Origin'))
-    console.log(isDomainAllowed)
+    console.log(req.header('origin'))
+    let isDomainAllowed = allowlist.indexOf(req.header('origin')) !== -1;
+
     if (isDomainAllowed) {
         corsOptions = { 
             origin: true ,
