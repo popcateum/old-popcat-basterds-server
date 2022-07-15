@@ -9,6 +9,7 @@ const allowedOrigins = ['https://oldpopcatbasterds.wtf', 'https://v2.dogesound.c
 const app = express();
 
 app.use(function (req, res, next) {
+    console.log(req.headers)
     console.log(req.headers.origin)
     if(allowedOrigins.indexOf(req.headers.origin) > -1){
         console.log("hell world")
