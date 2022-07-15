@@ -17,7 +17,7 @@ router.get("/metadata/:token_id", (req, res) => {
 });
 
 router.get("/image", (req, res) => {
-    res.sendFile('../image/xpass.png')
+    res.sendFile('../image/xpass.png', { root: __dirname })
 });
 
 module.exports = router;
