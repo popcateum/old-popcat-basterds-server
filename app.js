@@ -11,7 +11,7 @@ const xpassRouter = require('./routes/xpass');
 //     credentials: true
 // }
 
-const allowlist = ['https://oldpopcatbasterds.wtf', 'https://v2.dogesound.club', 'https://egsa.io/'];
+const allowlist = ['https://oldpopcatbasterds.wtf', 'https://v2.dogesound.club', 'https://egsa.io'];
 
 const corsOptionsDelegate = (req, callback) => {
     let corsOptions;
